@@ -1,19 +1,17 @@
 (import (chicken format)
         (chicken process-context))
 
-; using set! and global variables are AFAIK not idiomatic Scheme
-(define cat-age 0)
-
 ; recursion baby!
-(define (calculate-age years)
-    (if (= years 1)
-        (set! cat-age (+ cat-age 15)))
-    (if (= years 2)
-        (set! cat-age (+ cat-age 9)))
-    (if (> years 2)
-        (set! cat-age (+ cat-age 4)))
-    (if (not (= (sub1 years) 0))
-        (calculate-age (sub1 years))))
+(define (calculate-age years cat-age)
+(cond
+    [(= years 0)
+       cat-age]
+    [(= years 1)
+		(calculate-age (sub1 years) (+ cat-age 15))]
+    [(= years 2)
+        (calculate-age (sub1 years) (+ cat-age 9))]
+    [(> years 2)
+        (calculate-age (sub1 years) (+ cat-age 4))]))
 
 ; tedious checking of arguments
 (if (not (= (length (command-line-arguments)) 1))
@@ -32,8 +30,7 @@
        (exit 1)))
 
 ; do the stuff
-(calculate-age (string->number (car (command-line-arguments))))
+(define cat-age (calculate-age (string->number (car (command-line-arguments))) 0))
 
 ; print the stuff
 (printf "Your cat's age is equivalent to ~a human years old.\n" cat-age)
-
